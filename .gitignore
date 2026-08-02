@@ -1,0 +1,13 @@
+# Runtime state (self-populated)
+maya-agent/state/
+*.jsonl
+
+# Node
+node_modules/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

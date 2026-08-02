@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="MAYA Usage Dashboard, live provider usage, balances, and burn rate for the 2ndNatureAi MAYA platform." />
+  <title>MAYA Usage Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0D0E12;
+      --panel: rgba(16, 18, 24, 0.88);
+      --panel-2: rgba(23, 25, 32, 0.92);
+      --border: rgba(255,255,255,.08);
+      --text: #f2e6df;
+      --dim: #8a827c;
+      --orange: #ff7a39;
+      --green: #52d273;
+      --green-deep: #2d4a2d;
+      --red: #ff6f6f;
+      --amber: #f0a030;
+      --gold: #f0c060;
+      --blue: #6fadff;
+    }
+    * { box-sizing:border-box; margin:0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255,122,57,.08), transparent 24%),
+        radial-gradient(circle at 80% 2%, rgba(82,210,115,.045), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 24px 96px;
+      -webkit-app-region: no-drag;
+    }
+    .dash-window-controls {
+      position: fixed; top: 12px; right: 14px; z-index: 200;
+      display: flex; align-items: center; gap: 6px;
+      -webkit-app-region: no-drag;
+    }
+    .dash-window-btn {
+      width: 30px; height: 30px; border-radius: 9px;
+      border: 1px solid rgba(160,174,192,.14);
+      background: rgba(255,255,255,.035);
+      color: var(--dim); display: grid; place-items: center;
+      cursor: pointer; font: 800 16px/1 'Inter', system-ui;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .dash-window-btn:hover { color: var(--orange); border-color: rgba(255,149,64,.28); background: rgba(255,149,64,.075); }
+    .dash-window-close:hover { color: var(--red); border-color: rgba(255,111,111,.28); background: rgba(255,111,111,.075); }
+    header { margin: 12px 0 24px; display:flex; justify-content:space-between; gap:18px; align-items:flex-end; padding-right:120px; }
+    h1 { font-size: 24px; font-weight: 900; margin-bottom: 6px; letter-spacing:-.02em; }
+    h1 span { color: var(--orange); }
+    .sub { color: var(--dim); font-size: 11px; text-transform:uppercase; letter-spacing:.18em; font-weight:700; }
+    .source-pill { border:1px solid rgba(82,210,115,.18); border-radius:999px; padding:8px 12px; color:var(--green); background:rgba(82,210,115,.06); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; margin-bottom: 70px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.035);
+    }
+    .card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .14em; font-weight: 800; color: var(--orange); margin-bottom: 14px; }
+    .full-width { grid-column: 1 / -1; }
+    .row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:6px 0; font-size:13px; }
+    .row + .row { border-top: 1px solid rgba(255,255,255,.04); }
+    .label { color: var(--dim); }
+    .value { font-weight: 700; font-variant-numeric: tabular-nums; text-align:right; }
+    .val-ok { color: var(--green); }
+    .val-warn { color: var(--amber); }
+    .val-bad { color: var(--red); }
+    .val-info { color: var(--blue); }
+    .usage-meter { margin: 12px 0 14px; }
+    .usage-meter-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:7px; }
+    .usage-meter-title { font-size:13px; font-weight:900; color:var(--text); }
+    .usage-meter-value { font-size:13px; font-weight:900; font-variant-numeric:tabular-nums; }
+    .usage-meter-detail { color:var(--dim); font-size:11px; margin-top:6px; line-height:1.4; }
+    .bar-wrap { background: rgba(255,255,255,.06); border-radius: 999px; height: 10px; overflow:hidden; border:1px solid rgba(255,255,255,.035); }
+    .bar-fill { height:100%; border-radius:999px; transition:width .4s ease; min-width:2px; }
+    /* Brief edge merge: each fill fades in from the track and fades back
+       into it at the tip — same hues, just meshed together (no new colors). */
+    .bar-danger { background: linear-gradient(90deg, rgba(255,111,111,0) 0%, rgba(255,111,111,.28) 7%, #5b1d1d 18%, var(--red) 55%, var(--red) 80%, rgba(255,111,111,.30) 93%, rgba(255,111,111,0) 100%); box-shadow:0 0 14px rgba(255,111,111,.24); }
+    .bar-mid    { background: linear-gradient(90deg, rgba(240,160,48,0) 0%, rgba(240,160,48,.28) 7%, #7d531c 18%, var(--amber) 55%, var(--amber) 80%, rgba(240,160,48,.30) 93%, rgba(240,160,48,0) 100%); }
+    .bar-neutral { background: linear-gradient(90deg, rgba(111,173,255,0) 0%, rgba(111,173,255,.28) 7%, #1d2f4a 18%, var(--blue) 55%, var(--blue) 80%, rgba(111,173,255,.30) 93%, rgba(111,173,255,0) 100%); box-shadow:0 0 12px rgba(111,173,255,.18); }
+    .bar-safe   { background: linear-gradient(90deg, rgba(82,210,115,0) 0%, rgba(82,210,115,.28) 7%, var(--green-deep) 18%, var(--green) 55%, var(--green) 80%, rgba(82,210,115,.30) 93%, rgba(82,210,115,0) 100%); }
+    .badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .badge-ok { background: rgba(82,210,115,.14); color: var(--green); }
+    .badge-warn { background: rgba(240,160,48,.14); color: var(--amber); }
+    .badge-bad { background: rgba(255,111,111,.14); color: var(--red); }
+    .scores-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap:8px; }
+    .burn-hero { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:4px; }
+    .burn-stat { padding: 14px 16px; border-radius: 14px; border:1px solid var(--border); background: rgba(255,255,255,.02); }
+    .burn-stat .k { font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.12em; font-weight:800; margin-bottom:6px; }
+    .burn-stat .v { font-size:26px; font-weight:900; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+    .burn-stat .s { font-size:11px; color:var(--dim); margin-top:4px; }
+    .burn-stat.primary { border-color: rgba(255,122,57,.35); background: rgba(255,122,57,.06); }
+    .burn-stat.primary .v { color: var(--orange); }
+    .burn-stat.ok .v { color: var(--green); }
+    .burn-stat.warn .v { color: var(--amber); }
+    .burn-stat.neutral .v { color: var(--blue); }
+    .burn-stat.bad .v { color: var(--red); }
+    .note-row { color:var(--dim); font-size:11px; line-height:1.5; margin-top:10px; }
+    /* Consolidated fixed footer bar — timestamp, brand, and refresh live in
+       one solid bar so nothing floats over card content while scrolling. */
+    .footer-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; height: 56px;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: rgba(13,14,18,.94); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border); z-index: 200;
+    }
+    .refresh-btn { padding: 10px 22px; border-radius: 999px; background: var(--orange); color: #12100f; border: none; font-weight: 900; font-size: 13px; cursor: pointer; letter-spacing: .02em; box-shadow: 0 8px 24px rgba(255,122,57,.28); transition: transform .1s, filter .15s; }
+    .refresh-btn:hover { filter: brightness(1.1); }
+    .refresh-btn:active { transform: scale(.95); }
+    .refresh-btn.spinning { pointer-events: none; opacity: .7; }
+    .refreshed-at { color: var(--dim); font-size: 11px; }
+    .error { color: var(--red); font-size: 12px; padding: 8px; }
+    .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:8px 18px; font-size:12px; color:var(--text); z-index:300; opacity:0; transition:opacity .2s; pointer-events:none; }
+    .toast.show { opacity:1; }
+    .footer-brand { color: rgba(242,230,223,.5); font-size:11px; letter-spacing:.14em; font-weight:600; white-space:nowrap; }
+    @media (max-width: 760px) { header { display:block; padding-right:0; } .dashboard-grid { grid-template-columns: 1fr; } .footer-bar { padding: 0 14px; } .footer-brand { display:none; } }
+  </style>
+</head>
+<body>
+  <div class="dash-window-controls" aria-label="Dashboard window controls">
+    <button class="dash-window-btn" type="button" aria-label="Minimize" onclick="dashboardAction('minimize')">&minus;</button>
+    <button class="dash-window-btn" type="button" aria-label="Maximize" onclick="dashboardAction('maximize')">□</button>
+    <button class="dash-window-btn dash-window-close" type="button" aria-label="Close" onclick="dashboardAction('close')">×</button>
+  </div>
+  <header>
+    <div>
+      <h1>MAYA <span>Usage</span> Dashboard</h1>
+      <div class="sub">Provider usage · balances · burn rate</div>
+    </div>
+    <div class="source-pill" id="sourcePill">Live source pending</div>
+  </header>
+
+  <div class="dashboard-grid" id="dashboardGrid">
+    <div class="card"><h3>Loading…</h3><div class="row"><span class="label">Fetching live usage data…</span></div></div>
+  </div>
+
+  <div class="footer-bar">
+    <span class="refreshed-at" id="refreshedAt"></span>
+    <span class="footer-brand">Powered by 2ndNatureAi</span>
+    <button class="refresh-btn" onclick="refreshAll()" aria-label="Refresh usage data">⟳ Refresh</button>
+  </div>
+
+  <script>
+    const W = s => String(s || '—').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    const esc = value => String(value ?? '—').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const pct = value => Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
+    const METER = Object.freeze({ HIGH_BAD: 'highBad', LOW_BAD: 'lowBad' });
+
+    function meterTone(percent, opts = {}) {
+      var p = pct(percent);
+      var polarity = opts.polarity || METER.LOW_BAD;
+      var warn = opts.warnThreshold != null ? opts.warnThreshold : 50;
+      var danger = opts.dangerThreshold != null ? opts.dangerThreshold : 20;
+      // Explicit neither-good-nor-bad band -> blue.
+      if (opts.neutralZone && p >= opts.neutralZone[0] && p <= opts.neutralZone[1]) {
+        return 'neutral';
+      }
+      if (polarity === METER.LOW_BAD) {
+        // LOW_BAD: high is good, low is bad. Low <= danger = red; middle
+        // band up to warn = neutral (blue); above warn = good (green).
+        if (p <= danger) return 'bad';
+        if (p <= warn) return 'neutral';
+        return 'ok';
+      }
+      // HIGH_BAD: high is bad, low is good. High >= danger = red; middle
+      // band down to warn = neutral (blue); below warn = good (green).
+      if (p >= danger) return 'bad';
+      if (p >= warn) return 'neutral';
+      return 'ok';
+    }
+
+    const toneValueClass = tone => tone === 'bad' ? 'val-bad' : (tone === 'neutral' ? 'val-info' : 'val-ok');
+    const toneBarClass = tone => tone === 'bad' ? 'bar-danger' : (tone === 'neutral' ? 'bar-neutral' : 'bar-safe');
+
+    let toastTimer;
+    function toast(msg) {
+      let el = document.getElementById('toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.className = 'toast';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    function dashboardAction(action) {
+      if (window.mayaDesktop) {
+        if (action === 'minimize') window.mayaDesktop.minimize();
+        else if (action === 'maximize') window.mayaDesktop.toggleMaximize();
+        else if (action === 'close') window.mayaDesktop.close();
+        return;
+      }
+      if (action === 'close') {
+        window.close();
+        setTimeout(() => toast('Close blocked by browser — use Ctrl+W or close tab'), 300);
+      } else if (action === 'minimize') {
+        toast('Minimize not available in browser mode');
+      } else if (action === 'maximize') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    function card(title, rowsHtml, cls = '') {
+      return '<div class="card ' + cls + '"><h3>' + esc(title) + '</h3>' + rowsHtml + '</div>';
+    }
+    function row(label, value, cls = '') {
+      return '<div class="row"><span class="label">' + esc(label) + '</span><span class="value ' + cls + '">' + esc(value) + '</span></div>';
+    }
+    function meter(label, percent, detail, valueOverride, opts) {
+      detail = detail || '';
+      valueOverride = valueOverride || '';
+      opts = opts || {};
+      var p = pct(percent);
+      var tone = meterTone(p, opts);
+      return '<div class="usage-meter" data-usage-meter="' + esc(label) + '"><div class="usage-meter-head"><span class="usage-meter-title">' + esc(label) + '</span><span class="usage-meter-value ' + toneValueClass(tone) + '">' + esc(valueOverride || (p + '%')) + '</span></div><div class="bar-wrap"><div class="bar-fill ' + toneBarClass(tone) + '" style="width:' + p + '%"></div></div>' + (detail ? '<div class="usage-meter-detail">' + esc(detail) + '</div>' : '') + '</div>';
+    }
+
+    const LOW_BAD_QUOTA = { polarity: METER.LOW_BAD, warnThreshold: 50, dangerThreshold: 20 };
+    const LOW_BAD_SIGNAL = { polarity: METER.LOW_BAD, warnThreshold: 70, dangerThreshold: 40 };
+    const HIGH_BAD_MEMORY = { polarity: METER.HIGH_BAD, warnThreshold: 65, dangerThreshold: 85 };
+
+    function money(n, digits) {
+      digits = digits != null ? digits : 2;
+      var num = Number(n);
+      if (!Number.isFinite(num)) return '—';
+      return '$' + num.toFixed(digits);
+    }
+
+    function burnTone(dailyBurn, runwayDays) {
+      // Runway: <=3 days = red (bad), <=14 = blue (neutral), >14 = green (good)
+      if (runwayDays != null && runwayDays <= 3) return 'bad';
+      if (runwayDays != null && runwayDays <= 14) return 'neutral';
+      if (dailyBurn != null && dailyBurn <= 0) return 'ok';
+      return 'ok';
+    }
+
+    async function fetchJsonFast(path, timeoutMs) {
+      timeoutMs = timeoutMs || 45000;
+      var controller = new AbortController();
+      var timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+      try {
+        var response = await fetch(path, { cache: 'no-store', signal: controller.signal });
+        return await response.json();
+      } catch (error) {
+        return { ok: false, error: error && error.name === 'AbortError' ? 'timeout' : String(error && error.message || error) };
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function refreshAll() {
+      var btn = document.querySelector('.refresh-btn');
+      var statusEl = document.getElementById('refreshedAt');
+      statusEl.textContent = 'Refreshing…';
+      btn.classList.add('spinning');
+      btn.textContent = '⟳ Refreshing…';
+      try {
+        var [usage, burn] = await Promise.all([
+          fetchJsonFast('/api/maya-agent/realtime-usage', 45000),
+          fetchJsonFast('/api/maya-agent/burn-rate', 20000)
+        ]);
+        render(usage, burn);
+        statusEl.textContent = 'Updated: ' + new Date().toLocaleTimeString();
+      } catch(e) {
+        document.getElementById('dashboardGrid').innerHTML = '<div class="card full-width"><h3>Error</h3><div class="error">' + esc(e.message) + '</div></div>';
+        statusEl.textContent = 'Refresh failed — ' + new Date().toLocaleTimeString();
+        toast('Refresh failed — is the MAYA server running?');
+      } finally {
+        btn.classList.remove('spinning');
+        btn.textContent = '⟳ Refresh';
+      }
+    }
+
+    function renderBurnCard(burn) {
+      var daily = burn.totalDailyBurn;
+      var runway = burn.runwayDays;
+      var weekly = burn.weeklyBurn;
+      var monthly = burn.monthlyBurn;
+      var tone = burnTone(daily, runway);
+      var hero = '';
+      hero += '<div class="burn-hero">';
+      hero += '<div class="burn-stat primary"><div class="k">Daily burn</div><div class="v">' + money(daily, daily != null && daily < 0.01 ? 4 : 2) + '</div><div class="s">measured from provider balances</div></div>';
+      hero += '<div class="burn-stat ' + (runway != null && runway <= 3 ? 'bad' : (runway != null && runway <= 14 ? 'neutral' : 'ok')) + '"><div class="k">Runway</div><div class="v">' + (runway != null ? runway + ' days' : '—') + '</div><div class="s">at current burn rate</div></div>';
+      hero += '<div class="burn-stat"><div class="k">Weekly projection</div><div class="v">' + money(weekly, weekly != null && weekly < 0.01 ? 4 : 2) + '</div><div class="s">7 × daily burn</div></div>';
+      hero += '<div class="burn-stat"><div class="k">Monthly projection</div><div class="v">' + money(monthly, monthly != null && monthly < 0.01 ? 4 : 2) + '</div><div class="s">30 × daily burn</div></div>';
+      hero += '</div>';
+
+      var rows = '';
+      if (Array.isArray(burn.providers) && burn.providers.length) {
+        for (var i = 0; i < burn.providers.length; i++) {
+          var p = burn.providers[i];
+          rows += row(W(p.provider), (p.lastBalance != null ? money(p.lastBalance) : '—') + (p.dailyBurn != null ? ' · ' + money(p.dailyBurn, p.dailyBurn < 0.01 ? 4 : 2) + '/day' : ''), p.dailyBurn != null && p.dailyBurn > 0 ? 'val-warn' : 'val-ok');
+        }
+      }
+      rows += row('Total balance', money(burn.totalBalance), burn.totalBalance != null && burn.totalBalance > 0 ? 'val-ok' : 'val-bad');
+      rows += row('Measured burn window', burn.providers && burn.providers[0] && burn.providers[0].windowHours ? burn.providers[0].windowHours + ' hours' : '—', 'val-info');
+
+      var notes = (Array.isArray(burn.notes) ? burn.notes : []).map(function(n) { return '<div class="note-row">' + esc(n) + '</div>'; }).join('');
+      return card('🔥 Burn Rate', hero + rows + notes);
+    }
+
+    function render(data, burn) {
+      if (!data.ok) {
+        document.getElementById('dashboardGrid').innerHTML = card('Usage API Error', '<div class="error">' + esc(data.error || 'Unknown error') + '</div>', 'full-width');
+        return;
+      }
+      document.getElementById('sourcePill').textContent = (burn && burn.ok && burn.totalDailyBurn > 0) ? 'Live burn measured' : 'Live provider data';
+      var html = '';
+
+      // Burn rate hero — first card, full width
+      html += renderBurnCard(burn && burn.ok ? burn : { ok: true, providers: [], notes: ['Burn rate data is not available right now.'] });
+
+      // Watchdog status — probe results + stale warnings from the dashboard watchdog
+      var wd = (burn && burn.watchdog) || null;
+      if (wd && wd.ok) {
+        var wdRows = '';
+        if (Array.isArray(wd.probes) && wd.probes.length) {
+          for (var wdi = 0; wdi < wd.probes.length; wdi++) {
+            var probe = wd.probes[wdi];
+            // Probe results carry their own label; prettify as fallback.
+            var probeLabel = probe.label || W(probe.provider);
+            var probeVal = probe.ok ? (probe.balance != null ? money(probe.balance) : 'connected') : 'FAILED';
+            wdRows += row(probeLabel, probeVal, probe.ok ? 'val-ok' : 'val-bad');
+            if (!probe.ok && probe.error) wdRows += row('', esc(probe.error), 'val-bad');
+          }
+        } else {
+          wdRows += row('Configured Providers', 'none detected (add a provider key to .env)', 'val-warn');
+        }
+        if (wd.staleCount > 0) {
+          for (var si = 0; si < (wd.stale || []).length; si++) {
+            var stale = wd.stale[si];
+            if (stale.stale) wdRows += row('⚠ ' + W(stale.provider), esc(stale.warning), 'val-bad');
+          }
+        } else if ((wd.probes || []).length) {
+          wdRows += row('Stale Providers', 'none — all balances fresh', 'val-ok');
+        }
+        // Key health — dead key detection + rotation advisories
+        if (Array.isArray(wd.keyHealth) && wd.keyHealth.length) {
+          for (var khi = 0; khi < wd.keyHealth.length; khi++) {
+            var kh = wd.keyHealth[khi];
+            var khLabel = kh.label || W(kh.provider);
+            if (kh.state === 'auth_failed') {
+              wdRows += row('🔑 ' + khLabel + ' key', 'REJECTED — rotate at provider console', 'val-bad');
+              if (kh.error) wdRows += row('', esc(kh.error), 'val-bad');
+            } else if (kh.rotationDue) {
+              wdRows += row('🔑 ' + khLabel + ' key', 'rotation due (' + (kh.ageDays != null ? kh.ageDays : '?') + ' days)', 'val-warn');
+            } else if (kh.state === 'unreachable') {
+              wdRows += row('🔑 ' + khLabel + ' key', 'unreachable — cannot confirm', 'val-warn');
+            } else {
+              wdRows += row('🔑 ' + khLabel + ' key', kh.state === 'healthy' ? 'healthy' : 'connected', 'val-ok');
+            }
+          }
+        }
+        html += card('🛡️ Provider Watchdog', wdRows);
+      }
+
+      // Public label map — shared by balances + provider health cards. Add
+      // your provider here (or rely on the W() prettifier fallback).
+      var PUBLIC_PROVIDER_LABELS = {
+        'openai-codex': 'OpenAI Codex',
+        'gemini': 'Gemini',
+        'deepseek': 'DeepSeek',
+        'ollama': 'Ollama',
+        'elevenlabs': 'ElevenLabs',
+        'merge': 'Merge Gateway',
+        'merge-gateway': 'Merge Gateway',
+        'xai': 'xAI',
+        'groq': 'Groq',
+        'anthropic': 'Anthropic'
+      };
+      var publicProviderLabel = function(id, fallback) {
+        return PUBLIC_PROVIDER_LABELS[id] || PUBLIC_PROVIDER_LABELS[fallback] || fallback || W(id);
+      };
+
+      // Codex card — only rendered when real Codex quota data exists, so
+      // users who don't use Codex CLI never see an empty "Unavailable" card.
+      var codex = data.codex || {};
+      var codexSummary = codex.summary || {};
+      if (codexSummary.ok && Array.isArray(codexSummary.windows) && codexSummary.windows.length) {
+        var codexRows = '';
+        for (var i = 0; i < codexSummary.windows.length; i++) {
+          var win = codexSummary.windows[i];
+          var title = win.id === 'gpt-codex-5h' ? 'Codex 5h' : 'Codex Weekly';
+          codexRows += meter(title, win.remainingPercent, 'used ' + win.usedPercent + '% · resets ' + win.resetText, null, LOW_BAD_QUOTA);
+        }
+        codexRows += row('Plan', codex.planType || '—', 'val-info');
+        codexRows += row('Credits', codex.credits || 'No credits', 'val-info');
+        if (Array.isArray(codex.extraLimits) && codex.extraLimits.length) codexRows += row('Extra Limits', codex.extraLimits.join(', '), 'val-info');
+        codexRows += row('Rate Limit', codex.rateLimitReachedType || 'none', codex.rateLimitReachedType ? 'val-bad' : 'val-ok');
+        html += card('⚡ Codex', codexRows);
+      }
+
+      // Provider balances — generic, one row per provider that reports a
+      // balance. Renders whatever providers the user records, not hardcoded
+      // names. The burn-rate endpoint self-populates from the user's key.
+      var burnProviders = Array.isArray(burn.providers) ? burn.providers : [];
+      var balanceProviders = burnProviders.filter(function (bp) { return bp.lastBalance != null; });
+      if (balanceProviders.length) {
+        var balRows = '';
+        for (var bj = 0; bj < balanceProviders.length; bj++) {
+          var bp = balanceProviders[bj];
+          var bpLabel = publicProviderLabel(bp.provider);
+          var bpVal = money(bp.lastBalance) + (bp.dailyBurn != null && bp.dailyBurn > 0 ? ' · ' + money(bp.dailyBurn, bp.dailyBurn < 0.01 ? 4 : 2) + '/day' : '');
+          balRows += row(bpLabel, bpVal, bp.dailyBurn != null && bp.dailyBurn > 0 ? 'val-warn' : 'val-ok');
+        }
+        balRows += row('Total Balance', money(burn.totalBalance), 'val-ok');
+        html += card('💳 Provider Balances', balRows);
+      }
+
+      var providers = Array.isArray(data.providers) ? data.providers : [];
+      if (providers.length) {
+        var providerRows = '';
+        for (var pi = 0; pi < providers.length; pi++) {
+          var provider = providers[pi];
+          var publicLabel = publicProviderLabel(provider.id, provider.label);
+          providerRows += row(publicLabel, provider.configured ? (provider.health || 'configured') : 'missing', provider.configured ? (provider.health === 'healthy' ? 'val-ok' : 'val-info') : 'val-bad');
+        }
+        var configuredCount = providers.filter(function(p) { return p.configured; }).length;
+        var cleanSummary = configuredCount + ' of ' + providers.length + ' providers configured';
+        providerRows += row('Summary', cleanSummary, configuredCount === providers.length ? 'val-ok' : 'val-warn');
+        html += card('🔌 Provider Health', providerRows);
+      }
+
+      var crl = data.crl || {};
+      if (crl.ok) {
+        var crlRows = meter('Context Cache Hit Rate', crl.hitRate || 0, (crl.totalHits || 0) + ' hits · ' + (crl.totalCalls || 0) + ' calls · ' + (crl.estimatedBytesSavedFormatted || '0 KB') + ' saved', null, Object.assign({}, LOW_BAD_SIGNAL, { neutralZone: [40, 60] }));
+        crlRows += row('Total Entries', crl.totalEntries || 0);
+        crlRows += row('Active Entries', crl.activeEntries || 0);
+        crlRows += row('Embedding Matches', crl.embeddingMatches || 0, 'val-info');
+        html += card('📦 Context Cache', crlRows);
+      }
+
+      var moe = data.moe || {};
+      if (moe.ok && moe.scores) {
+        var chips = '';
+        var entries = Object.entries(moe.scores).sort(function(a,b) { return b[1]-a[1]; });
+        var EXPERT_LABELS = {
+          'openai_controller': 'OpenAI Controller',
+          'deepseek_worker': 'DeepSeek Worker',
+          'codex_spark_worker': 'Codex Spark',
+          'gemini_browser_scout': 'Gemini Scout',
+          'deepseek_iterative': 'DeepSeek Iterative',
+          'ollama_local_private': 'Ollama Local'
+        };
+        for (var ei = 0; ei < entries.length; ei++) {
+          var id = entries[ei][0];
+          var score = entries[ei][1];
+          var isActive = id === moe.activeExpert;
+          var label = EXPERT_LABELS[id] || W(id);
+          var s = Math.round(score);
+          chips += '<div class="score-chip' + (isActive ? ' active' : '') + '"><div class="expert-name">' + esc(label) + (isActive ? ' ★' : '') + '</div><div class="score-num" style="color:' + (s > 85 ? 'var(--green)' : (s > 65 ? 'var(--amber)' : 'var(--dim)')) + '">' + s + '</div></div>';
+        }
+        chips += '<div class="note-row">Active routing lane shown with ★. Scores reflect recent task-fit confidence.</div>';
+        html += card('🧭 Model Routing', '<div class="scores-grid">' + chips + '</div>' + row('Routing Confidence', (moe.confidence || 0) + '%', 'val-info') + row('Active Lane', W(moe.activeExpert), 'val-info'));
+      }
+
+      var rateLimits = Array.isArray(data.rateLimits) ? data.rateLimits : [];
+      if (rateLimits.length) {
+        var rlRows = '';
+        for (var ri = 0; ri < rateLimits.length; ri++) {
+          var rl = rateLimits[ri];
+          var min = Math.ceil((rl.resetsInSeconds || 0) / 60);
+          rlRows += row(rl.provider || 'unknown', rl.active ? 'ACTIVE · resets in ' + min + 'm' : 'inactive', rl.active ? 'val-bad' : 'val-ok');
+        }
+        html += card('⚠️ Rate Limits', rlRows);
+      }
+
+      document.getElementById('dashboardGrid').innerHTML = html;
+    }
+
+    refreshAll();
+    setInterval(refreshAll, 60000);
+  </script>
+</body>
+</html>

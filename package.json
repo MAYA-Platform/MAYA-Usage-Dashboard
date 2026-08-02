@@ -1,0 +1,17 @@
+{
+  "name": "maya-usage-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Live provider usage, balances, burn rate, and key health for AI spend. Provider-agnostic, zero dependencies.",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/maya-burn-rate.test.mjs tests/realtime-usage.test.mjs",
+    "watchdog": "node tools/maya-usage-watchdog.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt"
+}

@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "generated": "2026-08-02T00:00:00Z",
+  "total_entries": 14,
+  "files": {
+    ".gitignore": {
+      "sha256": "44c07c34ac43bf084560aa1e379bb8d60a69ed93f29b83c62b9837c862f821be",
+      "size": 121
+    },
+    "LICENSE.txt": {
+      "sha256": "66dff18c299dbf223ba9692aa0b372be2bda2fbf12485a063f6f4b2ae930704a",
+      "size": 1164
+    },
+    "README.md": {
+      "sha256": "0495972f67e28efe3229036d863feb9b6c87e1f6949d3396463917a5dfcf1741",
+      "size": 8507
+    },
+    "SECURITY.md": {
+      "sha256": "ae726aa4bcf4b64ff528cfa78ec1a6511e20b1596747f84809daa2bd7c561689",
+      "size": 1006
+    },
+    "docs/images/usage-dashboard-public.png": {
+      "sha256": "85f096ca1a3ead6f7f5e89e812866b4dda49f5d09e0b1279d325bb9d70499a7f",
+      "size": 233624
+    },
+    "lib/mayaBurnRate.js": {
+      "sha256": "1d9d865bc6820d1f0f9f8637762012ad0b761462ff70cff6e2ebbe2c2c898ff6",
+      "size": 8154
+    },
+    "lib/mayaProviderProbe.js": {
+      "sha256": "d4654770e4fcabf92439c55fe17343c14fc255e646ce90bb28f5c0fdde69be36",
+      "size": 10688
+    },
+    "package.json": {
+      "sha256": "394e0c830666e0f71e9edf51fbd9de2fe8e57d7078ac49b57c9faab23223570f",
+      "size": 525
+    },
+    "public/usage-dashboard-public.html": {
+      "sha256": "8216f3d34d57673ece804d91a68a20ec8fdc5f8baa6f63503efbe135845571ce",
+      "size": 27865
+    },
+    "scripts/generate-manifest.py": {
+      "sha256": "a955edcafd3b0b182813cc3505e8ed70ec6e23719677ce1cd5e7eabbd235eb08",
+      "size": 1640
+    },
+    "server.mjs": {
+      "sha256": "ad94a0ed37b8befcaf4d25a1b0e568051519eba69d4d75065ba1daf7762c3be9",
+      "size": 4949
+    },
+    "tests/maya-burn-rate.test.mjs": {
+      "sha256": "cc3eea9e4ad1538c2e9c1c9f7a381712f3992625935a82d3c8c04cdbebba11b3",
+      "size": 9852
+    },
+    "tests/realtime-usage.test.mjs": {
+      "sha256": "27445675b101cdea687b2a8ee4b3c72b91fdf256e3a461b11658e77c436b353a",
+      "size": 3614
+    },
+    "tools/maya-usage-watchdog.mjs": {
+      "sha256": "e7513f9745380ec11397bc292938500d25c92e301c769b6e72ddb5bee33438ba",
+      "size": 3159
+    }
+  }
+}
