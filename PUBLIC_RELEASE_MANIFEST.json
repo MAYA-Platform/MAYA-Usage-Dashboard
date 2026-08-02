@@ -20,8 +20,8 @@
       "size": 1006
     },
     "docs/images/usage-dashboard-public.png": {
-      "sha256": "e58e4e62958d2feb137871bd7e3422aa837d28f28d5d318c601d86cca3ce2a8a",
-      "size": 290841
+      "sha256": "282d05adfde8a5484e4cf127822f4cd0c8204a35f5c572d088ff00782b850308",
+      "size": 198137
     },
     "lib/mayaBurnRate.js": {
       "sha256": "1d9d865bc6820d1f0f9f8637762012ad0b761462ff70cff6e2ebbe2c2c898ff6",
@@ -36,8 +36,8 @@
       "size": 525
     },
     "public/usage-dashboard-public.html": {
-      "sha256": "c62bf399ff6a63e354c781428e5dccd980e3b5878b9c25487836d857bc7249b7",
-      "size": 27945
+      "sha256": "eda5eda3f643eef423b56ba79a6e60ceb7f679bf3830529fa6f4f48dd855130e",
+      "size": 27921
     },
     "scripts/generate-manifest.py": {
       "sha256": "a955edcafd3b0b182813cc3505e8ed70ec6e23719677ce1cd5e7eabbd235eb08",
