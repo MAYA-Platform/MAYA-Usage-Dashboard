@@ -12,7 +12,7 @@ MAYA Usage Dashboard is a local, public-beta, provider-agnostic monitoring surfa
 
 ![MAYA Usage Dashboard](docs/images/usage-dashboard-public.png)
 
-*Shown with a configured provider setup. First run shows $0.00 with no providers — the dashboard populates from the provider keys in your environment and self-builds burn rate over a few hours.*
+*Shown with a configured provider setup. First run shows $0.00 with no providers. The dashboard populates from the provider keys in your environment and self-builds burn rate over a few hours.*
 
 ## What it does
 
