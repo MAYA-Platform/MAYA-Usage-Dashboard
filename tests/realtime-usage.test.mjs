@@ -63,16 +63,20 @@ test('server serves the public dashboard at /', async () => {
   }
 });
 
-test('realtime-usage returns minimal public payload (no internal state)', async () => {
-  const child = startServer({ DEEPSEEK_API_KEY: 'sk-test-public' });
+test('realtime-usage returns public-safe payload with dashboard data', async () => {
+  const child = startServer({ DEEPSEEK_API_KEY: '«redacted:sk-…»' });
   try {
     await waitForServer();
     const data = await getJson('/api/maya-agent/realtime-usage');
     assert.equal(data.ok, true);
     assert.ok(Array.isArray(data.providers));
     assert.ok(data.providerHealth && Array.isArray(data.providerHealth.providers));
-    // Public contract: no internal state or config exposure
-    for (const key of ['memoryUsage', 'triad', 'bridge', 'hermesHome', 'moe', 'crl', 'codex']) {
+    // Public dashboard data — context cache + routing are real, health-derived
+    assert.ok(data.crl && data.crl.ok, 'context cache stats present');
+    assert.ok(data.moe, 'routing payload present');
+    assert.ok(Array.isArray(data.rateLimits), 'rate limits array present');
+    // Public contract: NO internal state or config exposure
+    for (const key of ['memoryUsage', 'triad', 'bridge', 'hermesHome', 'codex']) {
       assert.ok(!(key in data), `public payload must not contain ${key}`);
     }
   } finally {

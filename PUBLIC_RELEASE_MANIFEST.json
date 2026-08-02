@@ -20,8 +20,8 @@
       "size": 1006
     },
     "docs/images/usage-dashboard-public.png": {
-      "sha256": "85f096ca1a3ead6f7f5e89e812866b4dda49f5d09e0b1279d325bb9d70499a7f",
-      "size": 233624
+      "sha256": "82118ceb6a3c7173b1212cea6577de1a066c07a21ccfb6052e688b32f078d567",
+      "size": 242736
     },
     "lib/mayaBurnRate.js": {
       "sha256": "1d9d865bc6820d1f0f9f8637762012ad0b761462ff70cff6e2ebbe2c2c898ff6",
@@ -36,24 +36,24 @@
       "size": 525
     },
     "public/usage-dashboard-public.html": {
-      "sha256": "8216f3d34d57673ece804d91a68a20ec8fdc5f8baa6f63503efbe135845571ce",
-      "size": 27865
+      "sha256": "c62bf399ff6a63e354c781428e5dccd980e3b5878b9c25487836d857bc7249b7",
+      "size": 27945
     },
     "scripts/generate-manifest.py": {
       "sha256": "a955edcafd3b0b182813cc3505e8ed70ec6e23719677ce1cd5e7eabbd235eb08",
       "size": 1640
     },
     "server.mjs": {
-      "sha256": "ad94a0ed37b8befcaf4d25a1b0e568051519eba69d4d75065ba1daf7762c3be9",
-      "size": 4949
+      "sha256": "4bd69ba53a506fa4a343c2a5490753e68fe1dcdb56712d33b8c0264cb3109746",
+      "size": 7800
     },
     "tests/maya-burn-rate.test.mjs": {
       "sha256": "cc3eea9e4ad1538c2e9c1c9f7a381712f3992625935a82d3c8c04cdbebba11b3",
       "size": 9852
     },
     "tests/realtime-usage.test.mjs": {
-      "sha256": "27445675b101cdea687b2a8ee4b3c72b91fdf256e3a461b11658e77c436b353a",
-      "size": 3614
+      "sha256": "61808bccd741abad1ca974750001a245114759ab7d746fa62ed29036c1162c67",
+      "size": 3883
     },
     "tools/maya-usage-watchdog.mjs": {
       "sha256": "e7513f9745380ec11397bc292938500d25c92e301c769b6e72ddb5bee33438ba",
