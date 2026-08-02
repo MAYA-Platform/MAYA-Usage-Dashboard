@@ -12,8 +12,6 @@ MAYA Usage Dashboard is a local, public-beta, provider-agnostic monitoring surfa
 
 ![MAYA Usage Dashboard](docs/images/usage-dashboard-public.png)
 
-**Live demo:** [watch the dashboard in action](docs/images/dashboard-demo.mp4) — real buttons clicked, live data refreshed.
-
 ## What it does
 
 - **Burn rate from real deltas**, it measures dollars-per-day from actual balance movements, not estimates
