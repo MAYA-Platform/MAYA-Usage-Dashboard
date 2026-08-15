@@ -1,63 +1,63 @@
 {
-  "version": "1.0",
-  "generated": "2026-08-02T00:00:00Z",
-  "total_entries": 14,
-  "files": {
-    ".gitignore": {
-      "sha256": "44c07c34ac43bf084560aa1e379bb8d60a69ed93f29b83c62b9837c862f821be",
-      "size": 121
-    },
-    "LICENSE.txt": {
-      "sha256": "66dff18c299dbf223ba9692aa0b372be2bda2fbf12485a063f6f4b2ae930704a",
-      "size": 1164
-    },
-    "README.md": {
-      "sha256": "a7c62f28574e151faaa6a97011267940ec8d766ea3751d96ec7ecf54f87a6cd2",
-      "size": 8702
-    },
-    "SECURITY.md": {
-      "sha256": "ae726aa4bcf4b64ff528cfa78ec1a6511e20b1596747f84809daa2bd7c561689",
-      "size": 1006
-    },
-    "docs/images/usage-dashboard-public.png": {
-      "sha256": "282d05adfde8a5484e4cf127822f4cd0c8204a35f5c572d088ff00782b850308",
-      "size": 198137
-    },
-    "lib/mayaBurnRate.js": {
-      "sha256": "1d9d865bc6820d1f0f9f8637762012ad0b761462ff70cff6e2ebbe2c2c898ff6",
-      "size": 8154
-    },
-    "lib/mayaProviderProbe.js": {
-      "sha256": "d4654770e4fcabf92439c55fe17343c14fc255e646ce90bb28f5c0fdde69be36",
-      "size": 10688
-    },
-    "package.json": {
-      "sha256": "394e0c830666e0f71e9edf51fbd9de2fe8e57d7078ac49b57c9faab23223570f",
-      "size": 525
-    },
-    "public/usage-dashboard-public.html": {
-      "sha256": "eda5eda3f643eef423b56ba79a6e60ceb7f679bf3830529fa6f4f48dd855130e",
-      "size": 27921
-    },
-    "scripts/generate-manifest.py": {
-      "sha256": "a955edcafd3b0b182813cc3505e8ed70ec6e23719677ce1cd5e7eabbd235eb08",
-      "size": 1640
-    },
-    "server.mjs": {
-      "sha256": "4bd69ba53a506fa4a343c2a5490753e68fe1dcdb56712d33b8c0264cb3109746",
-      "size": 7800
-    },
-    "tests/maya-burn-rate.test.mjs": {
-      "sha256": "cc3eea9e4ad1538c2e9c1c9f7a381712f3992625935a82d3c8c04cdbebba11b3",
-      "size": 9852
-    },
-    "tests/realtime-usage.test.mjs": {
-      "sha256": "61808bccd741abad1ca974750001a245114759ab7d746fa62ed29036c1162c67",
-      "size": 3883
-    },
-    "tools/maya-usage-watchdog.mjs": {
-      "sha256": "e7513f9745380ec11397bc292938500d25c92e301c769b6e72ddb5bee33438ba",
-      "size": 3159
-    }
+ "version": "1.0",
+ "generated": "2026-08-02T00:00:00Z",
+ "total_entries": 14,
+ "files": {
+  ".gitignore": {
+   "sha256": "44c07c34ac43bf084560aa1e379bb8d60a69ed93f29b83c62b9837c862f821be",
+   "size": 121
+  },
+  "LICENSE.txt": {
+   "sha256": "3694eae782797ade391e56f99231765c262150a27b71c5e5d873115eacb0b738",
+   "size": 1068
+  },
+  "README.md": {
+   "sha256": "d6a64a9c4ab35e716befa26fc849752a1ff5f2eb75e2f0383124814686440e2b",
+   "size": 8532
+  },
+  "SECURITY.md": {
+   "sha256": "112a2087b10c39b72649390e070e77b78a7dc655058512d3eaa69034b9c17fed",
+   "size": 1005
+  },
+  "docs/images/usage-dashboard-public.png": {
+   "sha256": "282d05adfde8a5484e4cf127822f4cd0c8204a35f5c572d088ff00782b850308",
+   "size": 198137
+  },
+  "lib/mayaBurnRate.js": {
+   "sha256": "adb0cb91ca3aea00306b2a361238f2018b81c97b365ffdae363b69becc5c007b",
+   "size": 8368
+  },
+  "lib/mayaProviderProbe.js": {
+   "sha256": "d4654770e4fcabf92439c55fe17343c14fc255e646ce90bb28f5c0fdde69be36",
+   "size": 10688
+  },
+  "package.json": {
+   "sha256": "394e0c830666e0f71e9edf51fbd9de2fe8e57d7078ac49b57c9faab23223570f",
+   "size": 525
+  },
+  "public/usage-dashboard-public.html": {
+   "sha256": "ada90086fc861ec9d08d89010d520f6c59a6a3806562d00f2a181b883c1c4d5a",
+   "size": 28403
+  },
+  "scripts/generate-manifest.py": {
+   "sha256": "a955edcafd3b0b182813cc3505e8ed70ec6e23719677ce1cd5e7eabbd235eb08",
+   "size": 1640
+  },
+  "server.mjs": {
+   "sha256": "4bd69ba53a506fa4a343c2a5490753e68fe1dcdb56712d33b8c0264cb3109746",
+   "size": 7800
+  },
+  "tests/maya-burn-rate.test.mjs": {
+   "sha256": "cc3eea9e4ad1538c2e9c1c9f7a381712f3992625935a82d3c8c04cdbebba11b3",
+   "size": 9852
+  },
+  "tests/realtime-usage.test.mjs": {
+   "sha256": "61808bccd741abad1ca974750001a245114759ab7d746fa62ed29036c1162c67",
+   "size": 3883
+  },
+  "tools/maya-usage-watchdog.mjs": {
+   "sha256": "e7513f9745380ec11397bc292938500d25c92e301c769b6e72ddb5bee33438ba",
+   "size": 3159
   }
+ }
 }

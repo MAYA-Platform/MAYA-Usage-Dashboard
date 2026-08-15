@@ -6,9 +6,9 @@ MAYA Usage Dashboard turns raw provider balances into a live picture of burn rat
 
 **Real numbers, not estimates. Your providers, not ours.**
 
-MAYA Usage Dashboard is a local, public-beta, provider-agnostic monitoring surface for AI provider spend. It probes the provider keys in your environment, records balance points to a local history file, and self-populates burn rate over time. No cloud, no account, no telemetry.
+MAYA Usage Dashboard is a local, provider-agnostic monitoring surface for AI provider spend. It probes the provider keys in your environment, records balance points to a local history file, and self-populates burn rate over time. No cloud, no account, no telemetry.
 
-> MAYA Usage Dashboard is a controlled public beta. All data stays local to the machine that runs it. It is not a hosted service and carries no production SLA.
+> MAYA Usage Dashboard keeps all data local to the machine that runs it. It is not a hosted service and carries no production SLA.
 
 ![MAYA Usage Dashboard](docs/images/usage-dashboard-public.png)
 
@@ -128,11 +128,9 @@ Runs the full test suite with Node's built-in test runner. Tests cover burn-rate
 
 ## License
 
-MAYA Usage Dashboard is distributed under the 2ndNatureAi Public Beta Evaluation License 1.0. See [LICENSE.txt](LICENSE.txt) for the full terms.
+MAYA Usage Dashboard is distributed under the MIT License. See [LICENSE.txt](LICENSE.txt) for the full terms.
 
 ## Support & reporting issues
-
-Every MAYA product is a public beta. Expect rough edges and rapid iteration.
 
 Found a bug or a sharp edge? Open an issue on this repository. For anything sensitive, use GitHub's **Private vulnerability reporting** (see [SECURITY.md](SECURITY.md)). Never put credentials or private data in a public issue.
 
@@ -149,5 +147,5 @@ anything anywhere without my explicit approval.
 
 ## Project status
 
-- **Public beta.** Controlled evaluation release. Local, no hosted service.
+- **Released.** Local, no hosted service, no production SLA.
 - **Audited.** Public surfaces are swept for secrets, personal data, and internal vocabulary before each release.
