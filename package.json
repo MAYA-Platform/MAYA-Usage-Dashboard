@@ -7,7 +7,7 @@
   "main": "server.mjs",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/maya-burn-rate.test.mjs tests/realtime-usage.test.mjs",
+    "test": "node --test tests/maya-burn-rate.test.mjs tests/realtime-usage.test.mjs tests/usage-display-truth.test.mjs",
     "watchdog": "node tools/maya-usage-watchdog.mjs"
   },
   "engines": {

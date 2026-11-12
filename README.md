@@ -12,7 +12,7 @@ MAYA Usage Dashboard is a local, provider-agnostic monitoring surface for AI pro
 
 ![MAYA Usage Dashboard](docs/images/usage-dashboard-public.png)
 
-*Shown with a configured provider setup. First run shows $0.00 with no providers. The dashboard populates from the provider keys in your environment and self-builds burn rate over a few hours.*
+*Shown with a configured provider setup. First run shows unavailable values when no providers have supplied measurements. The dashboard populates from the provider keys in your environment and self-builds burn rate over a few hours.*
 
 ## What it does
 
@@ -41,7 +41,8 @@ No dependency installation is required. The package uses Node's built-in runtime
 
 Burn rate is measured from real provider balance deltas over time. The server keeps a `maya-agent/state/balance-history.jsonl` file (one JSON line per balance sample) and computes dollars-per-day from the difference between samples.
 
-- First run with no history: burn shows `$0.00` and runway shows `—`. This is expected.
+- First run with no history: burn, projections, balance, and runway show `—` until their inputs have been measured.
+- Known balance and burn cover only measured providers. The displayed runway is a partial estimate dividing known balances by measured burn; the sets can differ. The v1 API still uses numeric zero for empty aggregates; API consumers should inspect per-provider fields to distinguish unmeasured data.
 - The server self-populates: every time the burn-rate endpoint is called (the dashboard auto-refreshes every 60s), it records the current balance for each configured provider, throttled to one point per hour. After a few hours you have real samples and the burn rate appears automatically.
 - Override the history file location with the `MAYA_BALANCE_HISTORY_PATH` environment variable.
 - Providers without a programmatic balance endpoint are excluded from the burn total and shown honestly as not-measurable.
