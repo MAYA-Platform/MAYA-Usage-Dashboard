@@ -238,17 +238,9 @@
 
     function money(n, digits) {
       digits = digits != null ? digits : 2;
-      var num = Number(n);
-      if (!Number.isFinite(num)) return '—';
+      if (typeof n !== 'number' || !Number.isFinite(n)) return '—';
+      var num = n;
       return '$' + num.toFixed(digits);
-    }
-
-    function burnTone(dailyBurn, runwayDays) {
-      // Runway: <=3 days = red (bad), <=14 = blue (neutral), >14 = green (good)
-      if (runwayDays != null && runwayDays <= 3) return 'bad';
-      if (runwayDays != null && runwayDays <= 14) return 'neutral';
-      if (dailyBurn != null && dailyBurn <= 0) return 'ok';
-      return 'ok';
     }
 
     async function fetchJsonFast(path, timeoutMs) {
@@ -289,15 +281,17 @@
     }
 
     function renderBurnCard(burn) {
-      var daily = burn.totalDailyBurn;
-      var runway = burn.runwayDays;
-      var weekly = burn.weeklyBurn;
-      var monthly = burn.monthlyBurn;
-      var tone = burnTone(daily, runway);
+      var providers = Array.isArray(burn.providers) ? burn.providers : [];
+      var hasBurn = providers.some(function(p) { return p && typeof p.dailyBurn === 'number' && Number.isFinite(p.dailyBurn); });
+      var hasBalance = providers.some(function(p) { return p && typeof p.lastBalance === 'number' && Number.isFinite(p.lastBalance); });
+      var daily = hasBurn ? burn.totalDailyBurn : null;
+      var runway = hasBurn && hasBalance && Number.isFinite(burn.runwayDays) ? burn.runwayDays : null;
+      var weekly = hasBurn ? burn.weeklyBurn : null;
+      var monthly = hasBurn ? burn.monthlyBurn : null;
       var hero = '';
       hero += '<div class="burn-hero">';
-      hero += '<div class="burn-stat primary"><div class="k">Daily burn</div><div class="v">' + money(daily, daily != null && daily < 0.01 ? 4 : 2) + '</div><div class="s">measured from provider balances</div></div>';
-      hero += '<div class="burn-stat ' + (runway != null && runway <= 3 ? 'bad' : (runway != null && runway <= 14 ? 'neutral' : 'ok')) + '"><div class="k">Runway</div><div class="v">' + (runway != null ? runway + ' days' : '—') + '</div><div class="s">at current burn rate</div></div>';
+      hero += '<div class="burn-stat primary"><div class="k">Daily burn</div><div class="v">' + money(daily, daily != null && daily < 0.01 ? 4 : 2) + '</div><div class="s">measured providers only</div></div>';
+      hero += '<div class="burn-stat ' + (runway == null ? 'neutral' : (runway <= 3 ? 'bad' : (runway <= 14 ? 'neutral' : 'ok'))) + '"><div class="k">Partial runway</div><div class="v">' + (runway != null ? runway + ' days' : '—') + '</div><div class="s">known balance / measured burn; partial estimate</div></div>';
       hero += '<div class="burn-stat"><div class="k">Weekly projection</div><div class="v">' + money(weekly, weekly != null && weekly < 0.01 ? 4 : 2) + '</div><div class="s">7 × daily burn</div></div>';
       hero += '<div class="burn-stat"><div class="k">Monthly projection</div><div class="v">' + money(monthly, monthly != null && monthly < 0.01 ? 4 : 2) + '</div><div class="s">30 × daily burn</div></div>';
       hero += '</div>';
@@ -309,7 +303,7 @@
           rows += row(W(p.provider), (p.lastBalance != null ? money(p.lastBalance) : '—') + (p.dailyBurn != null ? ' · ' + money(p.dailyBurn, p.dailyBurn < 0.01 ? 4 : 2) + '/day' : ''), p.dailyBurn != null && p.dailyBurn > 0 ? 'val-warn' : 'val-ok');
         }
       }
-      rows += row('Total balance', money(burn.totalBalance), burn.totalBalance != null && burn.totalBalance > 0 ? 'val-ok' : 'val-bad');
+      rows += row('Known balance', money(hasBalance ? burn.totalBalance : null), !hasBalance ? 'val-info' : (burn.totalBalance > 0 ? 'val-ok' : 'val-bad'));
       rows += row('Measured burn window', burn.providers && burn.providers[0] && burn.providers[0].windowHours ? burn.providers[0].windowHours + ' hours' : '—', 'val-info');
 
       var notes = (Array.isArray(burn.notes) ? burn.notes : []).map(function(n) { return '<div class="note-row">' + esc(n) + '</div>'; }).join('');
@@ -411,7 +405,7 @@
       // balance. Renders whatever providers the user records, not hardcoded
       // names. The burn-rate endpoint self-populates from the user's key.
       var burnProviders = Array.isArray(burn.providers) ? burn.providers : [];
-      var balanceProviders = burnProviders.filter(function (bp) { return bp.lastBalance != null; });
+      var balanceProviders = burnProviders.filter(function (bp) { return bp && typeof bp.lastBalance === 'number' && Number.isFinite(bp.lastBalance); });
       if (balanceProviders.length) {
         var balRows = '';
         for (var bj = 0; bj < balanceProviders.length; bj++) {
@@ -420,7 +414,7 @@
           var bpVal = money(bp.lastBalance) + (bp.dailyBurn != null && bp.dailyBurn > 0 ? ' · ' + money(bp.dailyBurn, bp.dailyBurn < 0.01 ? 4 : 2) + '/day' : '');
           balRows += row(bpLabel, bpVal, bp.dailyBurn != null && bp.dailyBurn > 0 ? 'val-warn' : 'val-ok');
         }
-        balRows += row('Total Balance', money(burn.totalBalance), 'val-ok');
+        balRows += row('Known balance', money(burn.totalBalance), 'val-ok');
         html += card('💳 Provider Balances', balRows);
       }
 
